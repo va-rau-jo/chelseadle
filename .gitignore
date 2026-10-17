@@ -1,0 +1,7 @@
+# Your real puzzles and photos. NEVER commit this folder: the repo is public.
+content/
+
+node_modules/
+dist/
+.DS_Store
+*.log

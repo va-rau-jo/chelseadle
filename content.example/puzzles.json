@@ -1,0 +1,107 @@
+{
+  "password": "birthday",
+  "passwordHint": "Placeholder: the password is birthday. Change it in content/puzzles.json.",
+
+  "title": "Chelseadle",
+  "subtitle": "Four puzzles, all about you. Happy birthday!",
+
+  "crossword": {
+    "title": "The Mini",
+    "intro": "Tap a square to start. Tap it again to switch between across and down.",
+    "grid": [
+      "HAPPY",
+      "E#I#E",
+      "A#Z#A",
+      "R#Z#R",
+      "TEARS"
+    ],
+    "across": {
+      "1": "___ birthday!",
+      "4": "What I'll shed if you don't like this gift"
+    },
+    "down": {
+      "1": "What you stole from me",
+      "2": "Our go-to Friday-night dinner",
+      "3": "We've had some great ___ together"
+    },
+    "completeMessage": "Placeholder: a little note that appears when the whole crossword is done."
+  },
+
+  "cryptic": {
+    "title": "Minute Cryptic",
+    "intro": "Each clue has a definition at one end and wordplay that leads to the same answer.",
+    "clues": [
+      {
+        "clue": "Political group's celebration",
+        "answer": "party",
+        "definition": "celebration",
+        "hints": [
+          "This is a double definition: both halves of the clue mean the answer.",
+          "Think Democrats or Republicans."
+        ],
+        "explanation": "PARTY means a political group and a celebration."
+      },
+      {
+        "clue": "Present at first: gold, ink, flowers, toys",
+        "answer": "gift",
+        "definition": "Present",
+        "hints": [
+          "\"At first\" tells you to take the first letter of each word that follows."
+        ],
+        "explanation": "The first letters of Gold, Ink, Flowers and Toys spell GIFT."
+      }
+    ],
+    "completeMessage": "Placeholder: shown after every cryptic clue is solved."
+  },
+
+  "photos": {
+    "title": "Photo Guess",
+    "intro": "Where were we? Capitals, spaces and punctuation don't matter.",
+    "items": [
+      {
+        "image": "photo-1.jpg",
+        "question": "Where was this taken?",
+        "answers": ["Paris", "Paris France"],
+        "hints": ["Placeholder hint: think croissants."],
+        "reveal": "Placeholder: a memory about this photo."
+      },
+      {
+        "image": "photo-2.jpg",
+        "question": "What were we celebrating that day?",
+        "answer": "Anniversary",
+        "hints": ["Placeholder hint."],
+        "reveal": "Placeholder: another memory."
+      }
+    ],
+    "completeMessage": "Placeholder: shown after every photo is guessed."
+  },
+
+  "trivia": {
+    "title": "Trivia",
+    "intro": "How well do you know yourself?",
+    "items": [
+      {
+        "question": "Placeholder: what's Chelsea's favorite color?",
+        "choices": ["Green", "Blue", "Purple", "Yellow"],
+        "answer": "Green",
+        "reveal": "Placeholder: a fun fact."
+      },
+      {
+        "question": "Placeholder: what was the name of the restaurant on our first date?",
+        "answers": ["Placeholder Bistro", "The Bistro"],
+        "hints": ["Placeholder hint."]
+      },
+      {
+        "question": "Placeholder: how many months have we been together?",
+        "choices": ["6", "12", "18", "24"],
+        "answer": "12"
+      }
+    ],
+    "completeMessage": "Placeholder: shown after every trivia question is answered."
+  },
+
+  "finale": {
+    "title": "Happy birthday, Chelsea!",
+    "message": "Placeholder: your birthday message goes here. It only unlocks once all four puzzles are solved, so it's a good place to say where the real present is hidden."
+  }
+}
