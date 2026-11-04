@@ -1,13 +1,14 @@
 {
   "password": "birthday",
   "passwordHint": "Placeholder: the password is birthday. Change it in content/puzzles.json.",
-
   "title": "Chelseadle",
   "subtitle": "Four puzzles, all about you. Happy birthday!",
-
+  "music": {
+    "youtubePlaylist": ""
+  },
   "crossword": {
     "title": "The Mini",
-    "intro": "Tap a square to start. Tap it again to switch between across and down.",
+    "intro": "",
     "grid": [
       "HAPPY",
       "E#I#E",
@@ -26,80 +27,342 @@
     },
     "completeMessage": "Placeholder: a little note that appears when the whole crossword is done."
   },
-
   "cryptic": {
     "title": "Minute Cryptic",
-    "intro": "Each clue has a definition at one end and wordplay that leads to the same answer.",
+    "intro": "",
     "clues": [
       {
         "clue": "Political group's celebration",
         "answer": "party",
-        "definition": "celebration",
-        "hints": [
-          "This is a double definition: both halves of the clue mean the answer.",
-          "Think Democrats or Republicans."
+        "definition": [
+          "Political group's",
+          "celebration"
         ],
+        "par": 1,
         "explanation": "PARTY means a political group and a celebration."
       },
       {
         "clue": "Present at first: gold, ink, flowers, toys",
         "answer": "gift",
+        "indicator": "at first",
+        "indicatorExplanation": "“at first” is an acrostic indicator: take the first letter of each word that follows.",
+        "fodder": "gold, ink, flowers, toys",
         "definition": "Present",
-        "hints": [
-          "\"At first\" tells you to take the first letter of each word that follows."
-        ],
+        "par": 2,
         "explanation": "The first letters of Gold, Ink, Flowers and Toys spell GIFT."
       }
     ],
     "completeMessage": "Placeholder: shown after every cryptic clue is solved."
   },
-
   "photos": {
     "title": "Photo Guess",
-    "intro": "Where were we? Capitals, spaces and punctuation don't matter.",
+    "intro": "Where were we?",
     "items": [
       {
         "image": "photo-1.jpg",
         "question": "Where was this taken?",
-        "answers": ["Paris", "Paris France"],
-        "hints": ["Placeholder hint: think croissants."],
+        "answers": [
+          "Paris",
+          "Paris France"
+        ],
+        "hints": [
+          "Placeholder hint: think croissants."
+        ],
         "reveal": "Placeholder: a memory about this photo."
       },
       {
         "image": "photo-2.jpg",
         "question": "What were we celebrating that day?",
         "answer": "Anniversary",
-        "hints": ["Placeholder hint."],
+        "hints": [
+          "Placeholder hint."
+        ],
         "reveal": "Placeholder: another memory."
       }
     ],
     "completeMessage": "Placeholder: shown after every photo is guessed."
   },
-
-  "trivia": {
-    "title": "Trivia",
-    "intro": "How well do you know yourself?",
-    "items": [
+  "krillion": {
+    "title": "Krillion",
+    "intro": "",
+    "timeLimit": 100,
+    "tierText": {
+      "oneInAKrillion": "One in a krillion. Nobody else went this deep.",
+      "tooNiche": "So rare it was not even on the list.",
+      "deepCut": "Strange waters. Almost nobody thinks of that.",
+      "rare": "A rare find. Few dive this far.",
+      "schooler": "Solid. Swims with the school.",
+      "plankton": "Plankton. Everyone thought of that one.",
+      "none": "No catch this round. The current carries you on."
+    },
+    "prompts": [
       {
-        "question": "Placeholder: what's Chelsea's favorite color?",
-        "choices": ["Green", "Blue", "Purple", "Yellow"],
-        "answer": "Green",
-        "reveal": "Placeholder: a fun fact."
+        "prompt": "Name a fruit (placeholder)",
+        "answers": {
+          "oneInAKrillion": [
+            "Durian",
+            "Rambutan",
+            "Mangosteen",
+            "Cherimoya",
+            "Jabuticaba",
+            "Feijoa",
+            "Soursop",
+            "Ackee"
+          ],
+          "deepCut": [
+            "Lychee",
+            [
+              "Passion fruit",
+              "Maracuya"
+            ],
+            [
+              "Dragon fruit",
+              "Pitaya"
+            ],
+            "Persimmon",
+            [
+              "Starfruit",
+              "Carambola"
+            ],
+            "Jackfruit",
+            "Kumquat",
+            "Guanabana"
+          ],
+          "rare": [
+            "Papaya",
+            "Guava",
+            "Pomegranate",
+            "Apricot",
+            "Plum",
+            "Coconut",
+            "Cantaloupe",
+            "Fig",
+            "Nectarine"
+          ],
+          "schooler": [
+            "Mango",
+            "Pineapple",
+            "Watermelon",
+            "Peach",
+            "Pear",
+            "Cherry",
+            "Blueberry",
+            "Kiwi",
+            "Lemon",
+            "Raspberry"
+          ],
+          "plankton": [
+            "Apple",
+            "Banana",
+            "Orange",
+            "Strawberry",
+            [
+              "Grape",
+              "Grapes"
+            ]
+          ]
+        }
       },
       {
-        "question": "Placeholder: what was the name of the restaurant on our first date?",
-        "answers": ["Placeholder Bistro", "The Bistro"],
-        "hints": ["Placeholder hint."]
+        "prompt": "Name a Bad Bunny song (placeholder)",
+        "answers": {
+          "oneInAKrillion": [
+            "Soy Peor",
+            "Amorfoda",
+            "Si Veo a Tu Mama",
+            "Hoy Cobre"
+          ],
+          "deepCut": [
+            "Yonaguni",
+            "Neverita",
+            "Despues de la Playa",
+            "Chambea",
+            "Vete",
+            "NUEVAYoL"
+          ],
+          "rare": [
+            "Moscow Mule",
+            "Ojitos Lindos",
+            "La Cancion",
+            "Efecto",
+            "Safaera",
+            "Where She Goes",
+            "Monaco"
+          ],
+          "schooler": [
+            "Yo Perreo Sola",
+            "Callaita",
+            "Dakiti",
+            [
+              "BAILE INoLVIDABLE",
+              "Baile Inolvidable"
+            ]
+          ],
+          "plankton": [
+            [
+              "Titi Me Pregunto",
+              "Titi"
+            ],
+            "Me Porto Bonito",
+            [
+              "DtMF",
+              "Debi Tirar Mas Fotos"
+            ]
+          ]
+        }
       },
       {
-        "question": "Placeholder: how many months have we been together?",
-        "choices": ["6", "12", "18", "24"],
-        "answer": "12"
+        "prompt": "Name a city in Canada (placeholder)",
+        "answers": {
+          "oneInAKrillion": [
+            "Iqaluit",
+            "Tuktoyaktuk",
+            "Flin Flon",
+            "Moose Jaw",
+            "Dawson City",
+            "Medicine Hat"
+          ],
+          "deepCut": [
+            "Yellowknife",
+            "Whitehorse",
+            "Moncton",
+            "Thunder Bay",
+            "Kamloops",
+            "Nanaimo",
+            "Sudbury"
+          ],
+          "rare": [
+            "Halifax",
+            "Victoria",
+            "Saskatoon",
+            "Regina",
+            "Hamilton",
+            "Kelowna",
+            "Whistler",
+            "Banff"
+          ],
+          "schooler": [
+            "Ottawa",
+            "Calgary",
+            "Edmonton",
+            [
+              "Quebec City",
+              "Quebec"
+            ],
+            "Winnipeg"
+          ],
+          "plankton": [
+            "Toronto",
+            "Vancouver",
+            "Montreal"
+          ]
+        }
+      },
+      {
+        "prompt": "Name a breakfast food (placeholder)",
+        "answers": {
+          "oneInAKrillion": [
+            "Mangu",
+            "Kedgeree",
+            "Natto",
+            "Tamagoyaki",
+            "Tapioca"
+          ],
+          "deepCut": [
+            "Shakshuka",
+            "Chilaquiles",
+            "Congee",
+            "Huevos Rancheros",
+            "Pao de Queijo",
+            "Arepa"
+          ],
+          "rare": [
+            "Granola",
+            "Hash Browns",
+            "Breakfast Burrito",
+            "Croissant",
+            "Eggs Benedict",
+            "Crepes",
+            "Quiche"
+          ],
+          "schooler": [
+            "Waffles",
+            "Oatmeal",
+            "French Toast",
+            "Yogurt",
+            "Bagel",
+            "Omelette",
+            "Sausage"
+          ],
+          "plankton": [
+            [
+              "Eggs",
+              "Egg"
+            ],
+            "Pancakes",
+            "Bacon",
+            "Cereal",
+            "Toast"
+          ]
+        }
+      },
+      {
+        "prompt": "Name a Pixar movie (placeholder)",
+        "answers": {
+          "oneInAKrillion": [
+            "Luxo Jr",
+            "Geri's Game",
+            "Bao",
+            "La Luna",
+            "Piper"
+          ],
+          "deepCut": [
+            "Lightyear",
+            "The Good Dinosaur",
+            "Monsters University",
+            "Elio"
+          ],
+          "rare": [
+            "A Bug's Life",
+            "Turning Red",
+            "Luca",
+            "Onward",
+            "Elemental",
+            "Cars 2"
+          ],
+          "schooler": [
+            [
+              "Monsters Inc",
+              "Monsters, Inc."
+            ],
+            [
+              "The Incredibles",
+              "Incredibles"
+            ],
+            "Coco",
+            "Ratatouille",
+            [
+              "WALL-E",
+              "Wall E"
+            ],
+            "Soul",
+            "Brave"
+          ],
+          "plankton": [
+            "Toy Story",
+            [
+              "Finding Nemo",
+              "Nemo"
+            ],
+            "Up",
+            "Cars",
+            "Inside Out"
+          ]
+        }
       }
     ],
-    "completeMessage": "Placeholder: shown after every trivia question is answered."
+    "completeMessage": "Placeholder: shown when all five Krillion prompts are done."
   },
-
   "finale": {
     "title": "Happy birthday, Chelsea!",
     "message": "Placeholder: your birthday message goes here. It only unlocks once all four puzzles are solved, so it's a good place to say where the real present is hidden."

@@ -1,5 +1,5 @@
 // Loads and decrypts the files in public/data.
-import { decryptBytes, deriveSiteKeys, fromB64, normalize, openWithAnswer, toB64 } from './crypto.js';
+import { decryptBytes, deriveSiteKeys, fromB64, normalize, openWithAnswerAny, toB64 } from './crypto.js';
 
 const SAVED_KEY = 'chelseadle:key';
 
@@ -73,13 +73,7 @@ export function tryAnswer(salt, id, guess, locks) {
   if (!guessCache.has(cacheKey)) {
     guessCache.set(
       cacheKey,
-      (async () => {
-        for (const lock of locks) {
-          const payload = await openWithAnswer(salt, id, norm, lock);
-          if (payload) return payload;
-        }
-        return null;
-      })(),
+      openWithAnswerAny(salt, id, norm, locks),
     );
   }
   return guessCache.get(cacheKey);

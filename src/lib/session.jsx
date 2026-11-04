@@ -23,11 +23,17 @@ export function loadProgress(meta) {
 export async function verifyProgress(meta, content, progress) {
   const locks = {};
   for (const e of content.crossword.entries) locks[e.id] = e.locks;
-  for (const k of ['cryptic', 'photos', 'trivia']) for (const it of content[k].items) locks[it.id] = it.locks;
+  for (const k of ['cryptic', 'photos', 'krillion']) for (const it of content[k].items) locks[it.id] = it.locks;
   const solved = {};
   await Promise.all(
     Object.entries(progress.solved).map(async ([id, entry]) => {
-      if (!locks[id] || !entry?.answer) return;
+      if (!locks[id]) return;
+      // A Krillion prompt she passed on or ran out of time on still counts as done.
+      if (entry?.passed || entry?.claimed) {
+        solved[id] = entry;
+        return;
+      }
+      if (!entry?.answer) return;
       if (await tryAnswer(meta.salt, id, entry.answer, locks[id])) solved[id] = entry;
     }),
   );

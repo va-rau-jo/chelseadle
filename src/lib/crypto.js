@@ -105,6 +105,17 @@ export async function sealWithAnswer(salt, id, answer, payload) {
   return toB64(await encryptWith(key, key, enc.encode(JSON.stringify(payload))));
 }
 
+/** Like openWithAnswer, but checks one guess against many locks while deriving the key only once. */
+export async function openWithAnswerAny(salt, id, guess, sealedList) {
+  const key = await lockKey(salt, id, guess);
+  for (const sealed of sealedList) {
+    try {
+      return JSON.parse(dec.decode(await decryptWith(key, fromB64(sealed))));
+    } catch {}
+  }
+  return null;
+}
+
 /** Returns the sealed payload if `guess` is right, otherwise null. */
 export async function openWithAnswer(salt, id, guess, sealedB64) {
   try {
@@ -113,4 +124,21 @@ export async function openWithAnswer(salt, id, guess, sealedB64) {
   } catch {
     return null;
   }
+}
+
+// ---- Letter reveals (Minute Cryptic "show letter") ----
+// Revealing letters means the page has to know them, so they're scrambled rather than locked.
+
+async function letterPad(salt, id) {
+  return sha256(enc.encode(`letters|${salt}|${id}`));
+}
+
+export async function maskLetters(salt, id, letters) {
+  const pad = await letterPad(salt, id);
+  return toB64(enc.encode(letters).map((b, i) => b ^ pad[i % pad.length]));
+}
+
+export async function unmaskLetters(salt, id, masked) {
+  const pad = await letterPad(salt, id);
+  return dec.decode(fromB64(masked).map((b, i) => b ^ pad[i % pad.length]));
 }

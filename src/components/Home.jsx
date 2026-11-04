@@ -4,7 +4,7 @@ import { useSession } from '../lib/session.jsx';
 import { PUZZLE_ICONS } from './Icons.jsx';
 import Wordmark from './Wordmark.jsx';
 
-const NOUNS = { crossword: 'words', cryptic: 'clues', photos: 'photos', trivia: 'questions' };
+const NOUNS = { crossword: 'words', cryptic: 'clues', photos: 'photos', krillion: 'prompts' };
 
 export default function Home() {
   const { content, solved, progress, update } = useSession();
@@ -38,7 +38,7 @@ export default function Home() {
           const label = s.complete
             ? 'Tap to look back'
             : s.done === 0
-              ? `${s.total} ${NOUNS[p.key]}`
+              ? ''
               : `${s.done} of ${s.total} ${NOUNS[p.key]} solved`;
           return (
             <a
@@ -49,7 +49,7 @@ export default function Home() {
             >
               <Icon className="tile-icon" />
               <span className="tile-title">{content[p.key].title}</span>
-              <span className="tile-status">{label}</span>
+              {label && <span className="tile-status">{label}</span>}
               {!s.complete && s.done > 0 && (
                 <span className="tile-meter" aria-hidden="true">
                   <span style={{ width: `${(s.done / s.total) * 100}%` }} />

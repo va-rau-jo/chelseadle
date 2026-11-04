@@ -1,6 +1,6 @@
 {
   "title": "Chelseadle",
-  "passwordHint": "Placeholder: the password is birthday. Change it in content/puzzles.json.",
+  "passwordHint": "Chelsea's Birthday! (MM/DD/YYYY)",
   "salt": "KvjM1L4rmkdDBzNaEqgNAA==",
   "iterations": 250000
 }

@@ -31,12 +31,15 @@ export function PhotoIcon(props) {
   );
 }
 
-export function TriviaIcon(props) {
+export function KrillIcon(props) {
   return (
     <svg {...common} {...props}>
-      <path d="M8 10a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H22l-9 8v-8h-1a4 4 0 0 1-4-4z" />
-      <path d="M19.5 15.5a4.5 4.5 0 1 1 6.3 4.1c-1.2.6-1.8 1.4-1.8 2.7" />
-      <circle cx="24" cy="27" r="0.6" fill="currentColor" />
+      <path d="M9 31c1-9 10-16 21-14 5 1 9 5 7 10-3 7-14 10-24 8" />
+      <path d="M15 31c2-5 1-9-1-12M21 33c2-6 2-11 0-15M27 32c2-5 2-10 1-14" strokeWidth="2" />
+      <path d="M9 31l-5-5M9 31l-6 2" />
+      <path d="M18 36l-2 6M24 36l-1 6M30 34l1 6" strokeWidth="2.5" />
+      <path d="M37 22c3-5 6-9 6-14M35 19c1-5 0-10-3-13" strokeWidth="2" />
+      <circle cx="33" cy="22" r="1.4" fill="currentColor" />
     </svg>
   );
 }
@@ -70,5 +73,5 @@ export const PUZZLE_ICONS = {
   crossword: CrosswordIcon,
   cryptic: CrypticIcon,
   photos: PhotoIcon,
-  trivia: TriviaIcon,
+  krillion: KrillIcon,
 };

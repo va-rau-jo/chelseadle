@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Gate from './components/Gate.jsx';
 import Home from './components/Home.jsx';
+import { MusicProvider } from './components/Music.jsx';
 import { loadMeta, unlockWithSavedKey } from './lib/data.js';
 import { PUZZLES, groupGuess, statusOf } from './lib/puzzles.js';
 import { SessionProvider, loadProgress, useSession, verifyProgress } from './lib/session.jsx';
@@ -8,7 +9,7 @@ import { useHashRoute } from './lib/useHashRoute.js';
 import Crossword from './puzzles/Crossword.jsx';
 import Cryptic from './puzzles/Cryptic.jsx';
 import Photos from './puzzles/Photos.jsx';
-import Trivia from './puzzles/Trivia.jsx';
+import Krillion from './puzzles/Krillion.jsx';
 
 export default function App() {
   const [meta, setMeta] = useState(null);
@@ -53,13 +54,17 @@ export default function App() {
   );
 }
 
-const PAGES = { crossword: Crossword, cryptic: Cryptic, photos: Photos, trivia: Trivia };
+const PAGES = { crossword: Crossword, cryptic: Cryptic, photos: Photos, krillion: Krillion };
 
 function Router() {
   useCompletionUnlocks();
   const route = useHashRoute();
   const Page = PAGES[route] ?? Home;
-  return <Page />;
+  return (
+    <MusicProvider route={PAGES[route] ? route : ''}>
+      <Page />
+    </MusicProvider>
+  );
 }
 
 /** When a whole puzzle (or all four) is solved, unlock its hidden message. */

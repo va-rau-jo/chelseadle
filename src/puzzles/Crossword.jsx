@@ -74,13 +74,6 @@ export default function Crossword() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [letters, solved]);
 
-  // Finishing scrolls back up to the "Solved!" banner.
-  const wasComplete = useRef(complete);
-  useEffect(() => {
-    if (complete && !wasComplete.current) window.scrollTo({ top: 0, behavior: 'smooth' });
-    wasComplete.current = complete;
-  }, [complete]);
-
   const allFilled = entries.every((e) => cellsOf(e).every(([r, c]) => letters[keyOf(r, c)]));
 
   function setLetter(r, c, ch) {
@@ -193,7 +186,7 @@ export default function Crossword() {
   });
 
   return (
-    <PuzzleLayout puzzleKey="crossword">
+    <PuzzleLayout puzzleKey="crossword" showCompleteBanner={false}>
       <div className="cw">
         <div
           className={`cw-grid${sparse ? ' is-sparse' : ''}`}

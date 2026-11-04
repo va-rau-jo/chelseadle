@@ -1,5 +1,5 @@
 // The title spelled out in tiles that cycle through the four puzzle colours.
-const COLORS = ['var(--crossword)', 'var(--cryptic)', 'var(--photos)', 'var(--trivia)'];
+const COLORS = ['var(--crossword)', 'var(--cryptic)', 'var(--photos)', 'var(--krillion)'];
 
 export default function Wordmark({ text, size = 'large' }) {
   return (

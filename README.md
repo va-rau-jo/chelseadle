@@ -1,6 +1,6 @@
 # Chelseadle
 
-A password-protected birthday puzzle site: a mini crossword, Minute Cryptic-style clues, a photo guessing game and trivia. Built with React + Vite and hosted free on GitHub Pages.
+A password-protected birthday puzzle site: a mini crossword, Minute Cryptic-style clues, a photo guessing game and Krillion. Built with React + Vite and hosted free on GitHub Pages.
 
 ## How the secrets stay secret
 
@@ -63,11 +63,63 @@ The hint is the only thing shown before unlocking. Changing the password makes h
 "down":   { "1": "...", "3": "..." }
 ```
 
-**Minute Cryptic.** The letter count, like (3,5), comes from the answer. `definition` is the part of the clue that gets highlighted as the first hint. `explanation` appears after solving.
+**Minute Cryptic.** Each clue works like the real Minute Cryptic:
+
+```json
+{
+  "clue": "Miami plane mixup leads to you",
+  "answer": "novia",
+  "indicator": "mixup",
+  "fodder": "Miami plane",
+  "definition": "you",
+  "par": 2,
+  "explanation": "Plane in Miami is AVION. Mixup means anagram. NOVIA is you!"
+}
+```
+
+- `indicator`, `fodder` and `definition` are the words highlighted when she picks "show indicators", "show fodder" or "show definition" in the hints menu. Each must appear word for word in the clue, and each can also be a list (for example `"definition": ["Political group's", "celebration"]` for a double definition). Leave one out and that menu item disappears.
+- `indicatorExplanation` (optional) is a short note that appears under the clue once she reveals the indicator, e.g. `"“within” is a hidden-word indicator: the answer is spelled out inside the words around it."`
+- "show letter" reveals the answer one letter at a time, left to right.
+- The row of dots has one dot per possible hint: one for each letter, plus one for each of indicator, fodder and definition. Each hint she uses fills a dot.
+- `par` is the position of the "par" marker under the dots, counting from 0. `"par": 0` puts it under the first dot (par is 1 hint), and `"par": 2` puts it under the third (par is 3 hints).
+- The letter count, like (3,5), comes from the answer, and `explanation` appears after solving.
+- The scribble button opens a scratchpad: she types letters, drags them around to try anagrams, and can shuffle or clear them.
+- Note: "show letter" needs the letters in the page, so for cryptic answers they're scrambled rather than fully locked. Someone determined could dig them out with developer tools.
 
 **Photo Guess.** Put photos in `content/photos/` and refer to them by file name. Use .jpg, .png or .webp, because iPhone .heic photos won't display. Photos around 1600px wide load quickly on a phone.
 
-**Trivia.** Add `"choices": [...]` for multiple choice. Leave it out for a free-text answer.
+**Krillion.** Each prompt asks her to name something in a category, and rarer answers score more points. It plays as a full-screen vertical dive: every point sinks the krill 10 m deeper past the boat, fish and depth ruler. List the accepted answers under their tier:
+
+```json
+{
+  "prompt": "Name a fruit",
+  "answers": {
+    "oneInAKrillion": ["Durian", "Rambutan"],
+    "deepCut": ["Lychee", ["Dragon fruit", "Pitaya"]],
+    "rare": ["Papaya", "Guava"],
+    "schooler": ["Mango", "Pineapple"],
+    "plankton": ["Apple", "Banana"]
+  }
+}
+```
+
+- The tiers are One in a Krillion (100, gold), Deep Cut (85, purple), Rare (60, red), Schooler (30, cyan) and Plankton (10, grey). Leave out any tier you don't need.
+- An answer can be a list of spellings, for example `["Dragon fruit", "Pitaya"]`. Any of them counts, and the first one is what's shown.
+- The start screen doesn't show the first prompt. Each prompt appears only when its timer starts.
+- An answer that isn't in the bank shows "Not in the answer bank", and she can try again while time is left. She can also pass for 0 points.
+- `"tierText"` sets the line shown under each tier on the reveal screen, for example `"plankton": "Plankton. Everyone thought of that one."`. `"none"` is the line for a pass or when time runs out, and `"tooNiche"` is the line for an answer she claims with "Did I miss one?". Leave a tier out to use the default line.
+- `"timeLimit": 100` gives her 100 seconds per prompt, and when time runs out whatever she's typed is submitted. Set it to `0` for no timer. The timer keeps running if she leaves the page mid-prompt.
+- The final screen ("The catch") lists each round. Tapping a round opens that prompt's answer list, with tier filters and a search box. The answer list is scrambled rather than fully locked until then, the same as the cryptic letter reveals.
+- On a +0 screen (a pass or time running out) she can tap "Did I miss one?" and type the answer she had in mind. It scores +100 as "Too niche for me", with the same gold look as One in a Krillion, and shows up in that round's answer list as her pick.
+- `completeMessage` shows on the final screen. Krillion answers don't feed into the finale's lock, so the birthday message unlocks once every prompt has been played.
+
+**Music.** Background music comes from a YouTube playlist:
+
+```json
+"music": { "youtubePlaylist": "https://www.youtube.com/playlist?list=PL..." }
+```
+
+Paste the link from YouTube's Share button. The playlist must be Public or Unlisted, not Private. Music starts when she taps Unlock. A small music button sits in the bottom corner of the home page and in each puzzle's header. Tapping it opens a mini player with the song title, a progress bar, previous, rewind 10s, play/pause, forward 10s, next and a volume slider. The YouTube video itself stays hidden. iPhones don't let web pages change the volume, so the slider is hidden there, and if the phone blocks sound at first, the music starts muted and turns on at her first tap. Some official music videos don't allow embedding on other sites. The player skips those automatically, and the lyric or "Topic" versions of a song usually work instead. Leave `youtubePlaylist` empty to turn music off.
 
 **Messages.** Each puzzle can have a `completeMessage` that shows once that puzzle is fully solved. `finale` appears on the home page after all four are solved.
 
@@ -112,7 +164,7 @@ git push
 src/
   App.jsx               password gate, routing, completion unlocks
   components/           home screen, keyboard, shared pieces
-  puzzles/              Crossword.jsx, Cryptic.jsx, Photos.jsx, Trivia.jsx
+  puzzles/              Crossword.jsx, Cryptic.jsx, Photos.jsx, Krillion.jsx
   lib/crypto.js         encryption (shared by the browser and the build script)
   styles.css            all styling; colours are at the top
 scripts/build-content.mjs   validates content/ and writes public/data/

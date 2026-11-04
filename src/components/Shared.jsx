@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { PUZZLES, statusOf } from '../lib/puzzles.js';
 import { useSession } from '../lib/session.jsx';
 import { ChevronLeft, ChevronRight } from './Icons.jsx';
+import { MusicButton } from './Music.jsx';
 
-export function PuzzleLayout({ puzzleKey, children }) {
+export function PuzzleLayout({ puzzleKey, children, showCompleteBanner = true }) {
   const { content, solved } = useSession();
   const p = PUZZLES.find((x) => x.key === puzzleKey);
   const section = content[puzzleKey];
@@ -16,16 +17,17 @@ export function PuzzleLayout({ puzzleKey, children }) {
           Puzzles
         </a>
         <h1>{section.title}</h1>
-        <span className="pill" aria-label={`${status.done} of ${status.total} solved`}>
-          {status.done}/{status.total}
-        </span>
+        <div className="topbar-end">
+          <MusicButton />
+          <span className="pill" aria-label={`${status.done} of ${status.total} solved`}>
+            {status.done}/{status.total}
+          </span>
+        </div>
       </header>
       <main className="puzzle-body">
-        {status.complete ? (
-          <CompleteBanner puzzleKey={puzzleKey} />
-        ) : (
-          section.intro && <p className="intro">{section.intro}</p>
-        )}
+        {status.complete
+          ? showCompleteBanner && <CompleteBanner puzzleKey={puzzleKey} />
+          : section.intro && <p className="intro">{section.intro}</p>}
         {children}
       </main>
     </div>
@@ -33,8 +35,8 @@ export function PuzzleLayout({ puzzleKey, children }) {
 }
 
 function CompleteBanner({ puzzleKey }) {
-  const { solved } = useSession();
-  const message = solved[`${puzzleKey}.complete`]?.message;
+  const { solved, content } = useSession();
+  const message = solved[`${puzzleKey}.complete`]?.message ?? content[puzzleKey].completeNote;
   return (
     <section className="complete-banner" aria-live="polite">
       <strong>Solved!</strong>

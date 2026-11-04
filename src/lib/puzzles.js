@@ -4,7 +4,7 @@ export const PUZZLES = [
   { key: 'crossword', color: 'var(--crossword)', tint: 'var(--crossword-tint)' },
   { key: 'cryptic', color: 'var(--cryptic)', tint: 'var(--cryptic-tint)' },
   { key: 'photos', color: 'var(--photos)', tint: 'var(--photos-tint)' },
-  { key: 'trivia', color: 'var(--trivia)', tint: 'var(--trivia-tint)' },
+  { key: 'krillion', color: 'var(--krillion)', tint: 'var(--krillion-tint)' },
 ];
 
 export function itemsOf(content, key) {
@@ -19,6 +19,8 @@ export function statusOf(content, solved, key) {
 
 /** The combined answers that unlock a puzzle's completion message. */
 export function groupGuess(content, solved, key) {
+  // Krillion accepts many answers, so it doesn't feed the finale's lock.
+  if (key === 'krillion') return '';
   return itemsOf(content, key)
     .map((it) => normalize(solved[it.id]?.answer))
     .join('');
