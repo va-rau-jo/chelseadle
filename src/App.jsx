@@ -37,6 +37,8 @@ export default function App() {
     })();
   }, []);
 
+  const route = useHashRoute();
+
   if (error) {
     return (
       <main className="gate">
@@ -45,26 +47,27 @@ export default function App() {
     );
   }
   if (booting) return <main className="gate" aria-busy="true" />;
-  if (!session) return <Gate meta={meta} onUnlock={(u) => start(meta, u)} />;
 
+  // The music player lives above the password page so it's loaded and ready when she taps Unlock.
   return (
-    <SessionProvider meta={meta} content={session.content} imageKey={session.key} initialProgress={session.progress}>
-      <Router />
-    </SessionProvider>
+    <MusicProvider playlist={meta?.music ?? session?.content.music?.playlist} route={PAGES[route] ? route : ''} unlocked={!!session}>
+      {session ? (
+        <SessionProvider meta={meta} content={session.content} imageKey={session.key} initialProgress={session.progress}>
+          <Router route={route} />
+        </SessionProvider>
+      ) : (
+        <Gate meta={meta} onUnlock={(u) => start(meta, u)} />
+      )}
+    </MusicProvider>
   );
 }
 
 const PAGES = { crossword: Crossword, cryptic: Cryptic, photos: Photos, krillion: Krillion };
 
-function Router() {
+function Router({ route }) {
   useCompletionUnlocks();
-  const route = useHashRoute();
   const Page = PAGES[route] ?? Home;
-  return (
-    <MusicProvider route={PAGES[route] ? route : ''}>
-      <Page />
-    </MusicProvider>
-  );
+  return <Page />;
 }
 
 /** When a whole puzzle (or all four) is solved, unlock its hidden message. */

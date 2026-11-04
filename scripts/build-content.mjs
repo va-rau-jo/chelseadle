@@ -379,6 +379,8 @@ export async function buildContent({ root = process.cwd(), log = console.log } =
     passwordHint: src.passwordHint || '',
     salt,
     iterations: PASSWORD_ITERATIONS,
+    // The playlist ID is public so the player can load before the password is entered.
+    music: music?.playlist ?? null,
   };
   files.set('meta.json', new TextEncoder().encode(JSON.stringify(meta, null, 2) + '\n'));
 

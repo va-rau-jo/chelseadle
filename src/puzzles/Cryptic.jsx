@@ -3,6 +3,7 @@ import { Keyboard, usePhysicalKeys } from '../components/Keyboard.jsx';
 import { ItemNav, PuzzleLayout, SolvedNote, usePosition } from '../components/Shared.jsx';
 import { normalize, unmaskLetters } from '../lib/crypto.js';
 import { useSession } from '../lib/session.jsx';
+import { chime } from '../lib/sound.js';
 
 // Minute Cryptic-style hints. Each one highlights part of the clue in its own colour.
 const HINT_TYPES = [
@@ -24,7 +25,7 @@ export default function Cryptic() {
 }
 
 function Clue({ item, nextUnsolved, setPos }) {
-  const { meta, solved, check, markSolved, puzzleData, setPuzzleData } = useSession();
+  const { meta, content, solved, check, markSolved, puzzleData, setPuzzleData } = useSession();
   const N = item.length;
   const saved = puzzleData('cryptic')[item.id] ?? {};
   const letters = toArray(saved.letters, N);
@@ -103,6 +104,7 @@ function Clue({ item, nextUnsolved, setPos }) {
     const payload = await check(item.id, letters.join(''), item.locks);
     if (payload) {
       markSolved(item.id, { answer: payload.answer, note: payload.note, hints: used });
+      chime(content.cryptic.items.every((x) => x.id === item.id || solved[x.id]) ? 'big' : 'correct');
       setStatus('idle');
       setMenuOpen(false);
       setScratchOpen(false);

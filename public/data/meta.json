@@ -2,5 +2,6 @@
   "title": "Chelseadle",
   "passwordHint": "Chelsea's Birthday! (MM/DD/YYYY)",
   "salt": "KvjM1L4rmkdDBzNaEqgNAA==",
-  "iterations": 250000
+  "iterations": 250000,
+  "music": "PLAd9TYa50N4c"
 }

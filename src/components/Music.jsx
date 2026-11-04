@@ -2,8 +2,11 @@
 // The YouTube player itself is invisible and can't be tapped; Chelsea uses our own
 // controls instead: a small round button that opens a mini player with previous,
 // rewind 10s, play/pause, forward 10s, next and volume.
+//
+// Browsers never allow sound before the visitor taps or types something. So the player
+// loads (muted) on the password page, and the music is switched on inside the Unlock
+// tap itself. On return visits (already logged in) it starts at her first tap anywhere.
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { useSession } from '../lib/session.jsx';
 
 const MusicContext = createContext(null);
 const VOLUME_KEY = 'chelseadle:volume';
@@ -48,19 +51,71 @@ const clock = (s) => {
   return `${m}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 };
 
-export function MusicProvider({ route, children }) {
-  const { content } = useSession();
-  const playlist = content.music?.playlist;
+const log = (...a) => console.info('[chelseadle music]', ...a);
+
+export function useMusic() {
+  return useContext(MusicContext);
+}
+
+export function MusicProvider({ playlist, route, unlocked, children }) {
   const host = useRef(null);
   const player = useRef(null);
+  const ready = useRef(false);
+  const wantSound = useRef(false); // she pressed Unlock (or tapped), so sound should be on
+  const started = useRef(false); // the playlist has been restarted from the top for her
   const errors = useRef(0);
   const [failed, setFailed] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const [needsTap, setNeedsTap] = useState(false); // waiting for a tap to start (or unmute)
+  const [needsTap, setNeedsTap] = useState(false); // sound was blocked: waiting for another tap
   const [expanded, setExpanded] = useState(false);
   const [title, setTitle] = useState('');
   const [volume, setVolumeState] = useState(savedVolume);
   const [time, setTime] = useState({ now: 0, total: 0 });
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
+  const checkTimer = useRef(null);
+
+  // Turn the sound on. Must run inside a tap or key press, or the browser refuses.
+  const soundOn = useCallback(() => {
+    wantSound.current = true;
+    const p = player.current;
+    if (!p || !ready.current) {
+      log('tap before the player was ready; will start as soon as it loads');
+      return;
+    }
+    try {
+      p.unMute();
+      p.setVolume(volumeRef.current);
+      if (!started.current) {
+        started.current = true;
+        p.seekTo(0, true); // it has been playing silently on the password page
+      }
+      p.playVideo();
+    } catch (err) {
+      log('could not start', err);
+    }
+    // Check that it really worked; if the browser blocked it, wait for her next tap.
+    clearTimeout(checkTimer.current);
+    checkTimer.current = setTimeout(() => {
+      const st = p.getPlayerState?.();
+      const ok = !p.isMuted?.() && (st === 1 || st === 3);
+      log(ok ? 'sound is on' : `sound blocked (state ${st}, muted ${p.isMuted?.()}); waiting for a tap`);
+      setNeedsTap(!ok);
+      setPlaying(ok);
+    }, 900);
+  }, []);
+
+  // Wrong password: stop again, so the music really starts with the right one.
+  const soundOff = useCallback(() => {
+    wantSound.current = false;
+    started.current = false;
+    clearTimeout(checkTimer.current);
+    const p = player.current;
+    try {
+      p?.mute();
+      p?.pauseVideo();
+    } catch {}
+  }, []);
 
   useEffect(() => {
     if (!playlist) return;
@@ -74,6 +129,8 @@ export function MusicProvider({ route, children }) {
           playerVars: {
             listType: 'playlist',
             list: playlist,
+            autoplay: 1,
+            mute: 1,
             playsinline: 1,
             controls: 0,
             disablekb: 1,
@@ -82,29 +139,26 @@ export function MusicProvider({ route, children }) {
           },
           events: {
             onReady: (e) => {
+              ready.current = true;
               const p = e.target;
-              p.setVolume(savedVolume());
-              p.playVideo();
-              // Browsers may block sound until she taps something. Fall back to starting
-              // muted (which is always allowed) and turn the sound on at her first tap.
-              setTimeout(() => {
-                const s = p.getPlayerState?.();
-                if (s !== YT.PlayerState.PLAYING && s !== YT.PlayerState.BUFFERING) {
-                  p.mute();
-                  p.playVideo();
-                  setNeedsTap(true);
-                }
-              }, 1500);
+              log('player ready');
+              if (wantSound.current) soundOn();
+              else {
+                // Start silently (always allowed) so it can be unmuted instantly at Unlock.
+                p.mute();
+                p.playVideo();
+              }
             },
             onStateChange: (e) => {
               const isPlaying = e.data === YT.PlayerState.PLAYING;
-              setPlaying(isPlaying);
+              setPlaying(isPlaying && !e.target.isMuted?.());
               if (isPlaying) errors.current = 0;
               const t = e.target.getVideoData?.()?.title;
               if (t) setTitle(t);
             },
             onError: (e) => {
               // 101/150: the owner doesn't allow this video on other sites. Skip it.
+              log(`video error ${e.data}${e.data === 150 || e.data === 101 ? ' (embedding disabled), skipping' : ''}`);
               errors.current += 1;
               if (errors.current > 25 || e.data === 2) {
                 setFailed(true);
@@ -115,31 +169,38 @@ export function MusicProvider({ route, children }) {
           },
         });
       })
-      .catch(() => setFailed(true));
+      .catch((err) => {
+        log('YouTube could not load', err);
+        setFailed(true);
+      });
     return () => {
       cancelled = true;
     };
-  }, [playlist]);
+  }, [playlist, soundOn]);
+
+  // Once she's in: if sound isn't on yet (return visit, or the browser blocked it),
+  // start it at her next tap or key press anywhere.
+  useEffect(() => {
+    if (!unlocked || !playlist || failed) return;
+    if (wantSound.current && !needsTap) return;
+    const start = () => soundOn();
+    const opts = { capture: true };
+    const evs = ['pointerdown', 'touchend', 'keydown'];
+    for (const ev of evs) document.addEventListener(ev, start, opts);
+    return () => {
+      for (const ev of evs) document.removeEventListener(ev, start, opts);
+    };
+  }, [unlocked, playlist, failed, needsTap, soundOn]);
+
+  // Note when she reaches the home page: the music should already be going by now.
+  useEffect(() => {
+    if (unlocked && !wantSound.current) setNeedsTap(true);
+  }, [unlocked]);
 
   // On a puzzle page the open player would cover the keyboard, so tuck it away.
   useEffect(() => {
     if (route) setExpanded(false);
   }, [route]);
-
-  // If sound was blocked, unmute and play on her next tap anywhere.
-  useEffect(() => {
-    if (!needsTap) return;
-    const start = () => {
-      const p = player.current;
-      if (!p) return;
-      p.unMute?.();
-      p.setVolume?.(volume);
-      p.playVideo?.();
-      setNeedsTap(false);
-    };
-    document.addEventListener('pointerdown', start, { once: true, capture: true });
-    return () => document.removeEventListener('pointerdown', start, { capture: true });
-  }, [needsTap, volume]);
 
   // Keep the time readout fresh while the player is open.
   useEffect(() => {
@@ -157,11 +218,8 @@ export function MusicProvider({ route, children }) {
     const p = player.current;
     if (!p) return;
     if (playing) p.pauseVideo();
-    else {
-      p.unMute?.();
-      p.playVideo();
-    }
-  }, [playing]);
+    else soundOn();
+  }, [playing, soundOn]);
 
   const skip = (delta) => () => {
     const p = player.current;
@@ -185,7 +243,9 @@ export function MusicProvider({ route, children }) {
   };
 
   const value = {
-    enabled: !!playlist && !failed,
+    enabled: !!playlist && !failed && unlocked,
+    soundOn,
+    soundOff,
     playing,
     needsTap,
     expanded,
@@ -205,7 +265,7 @@ export function MusicProvider({ route, children }) {
             <div ref={host} />
           </div>
 
-          {expanded && (
+          {expanded && unlocked && (
             <section className="music" aria-label="Music player">
               <div className="music-head">
                 <p className="music-title" title={title}>
@@ -260,7 +320,7 @@ export function MusicProvider({ route, children }) {
             </section>
           )}
 
-          {!expanded && !route && <MusicButton floating />}
+          {!expanded && unlocked && !route && <MusicButton floating />}
         </>
       )}
     </MusicContext.Provider>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { GuessForm, Hints, ItemNav, PuzzleLayout, SolvedNote, usePosition } from '../components/Shared.jsx';
 import { loadImage } from '../lib/data.js';
 import { useSession } from '../lib/session.jsx';
+import { chime } from '../lib/sound.js';
 
 export default function Photos() {
   const { content } = useSession();
@@ -16,7 +17,7 @@ export default function Photos() {
 }
 
 function PhotoItem({ item, index, nextUnsolved, setPos }) {
-  const { imageKey, solved, markSolved, puzzleData, setPuzzleData } = useSession();
+  const { imageKey, content, solved, markSolved, puzzleData, setPuzzleData } = useSession();
   const entry = solved[item.id];
   const hintsShown = puzzleData('photos').hints?.[item.id] ?? 0;
   const [src, setSrc] = useState(null);
@@ -49,7 +50,10 @@ function PhotoItem({ item, index, nextUnsolved, setPos }) {
         <SolvedNote entry={entry} onNext={nextUnsolved() >= 0 ? () => setPos(nextUnsolved()) : null} />
       ) : (
         <>
-          <GuessForm id={item.id} locks={item.locks} onSolved={(p) => markSolved(item.id, { answer: p.answer, note: p.note })} />
+          <GuessForm id={item.id} locks={item.locks} onSolved={(p) => {
+            markSolved(item.id, { answer: p.answer, note: p.note });
+            chime(content.photos.items.every((x) => x.id === item.id || solved[x.id]) ? 'big' : 'correct');
+          }} />
           <Hints
             hints={item.hints}
             shown={hintsShown}

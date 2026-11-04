@@ -1,18 +1,25 @@
 import { useState } from 'react';
 import { unlockWithPassword } from '../lib/data.js';
+import { useMusic } from './Music.jsx';
 import Wordmark from './Wordmark.jsx';
 
 export default function Gate({ meta, onUnlock }) {
   const [password, setPassword] = useState('');
   const [state, setState] = useState('idle'); // idle | checking | wrong
+  const music = useMusic();
 
   async function submit(e) {
     e.preventDefault();
     if (!password.trim() || state === 'checking') return;
     setState('checking');
+    // Start the music right now, inside the tap: browsers only allow sound during one.
+    music?.soundOn();
     const result = await unlockWithPassword(meta, password);
     if (result) await onUnlock(result);
-    else setState('wrong');
+    else {
+      music?.soundOff();
+      setState('wrong');
+    }
   }
 
   return (

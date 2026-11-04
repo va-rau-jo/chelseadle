@@ -4,6 +4,7 @@ import { Keyboard, usePhysicalKeys } from '../components/Keyboard.jsx';
 import { PuzzleLayout } from '../components/Shared.jsx';
 import { statusOf } from '../lib/puzzles.js';
 import { useSession } from '../lib/session.jsx';
+import { chime } from '../lib/sound.js';
 
 const keyOf = (r, c) => `${r},${c}`;
 const cellsOf = (e) =>
@@ -65,7 +66,10 @@ export default function Crossword() {
         if (word.length !== e.length) continue;
         const payload = await check(e.id, word, e.locks);
         if (cancelled) return;
-        if (payload) markSolved(e.id, { answer: payload.answer });
+        if (payload) {
+          markSolved(e.id, { answer: payload.answer });
+          chime(entries.every((x) => x.id === e.id || solved[x.id]) ? 'big' : 'small');
+        }
       }
     })();
     return () => {

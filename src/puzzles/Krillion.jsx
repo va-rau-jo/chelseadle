@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { MusicButton } from '../components/Music.jsx';
 import { unmaskLetters } from '../lib/crypto.js';
 import { useSession } from '../lib/session.jsx';
+import { chime } from '../lib/sound.js';
 
 export const TIERS = {
   oneInAKrillion: { name: 'Krillion', long: 'One in a Krillion', points: 100, line: 'One in a krillion. Nobody else went this deep.' },
@@ -100,9 +101,10 @@ export default function Krillion() {
           entry={solved[reveal]}
           text={k.tierText ?? {}}
           last={nextIndex < 0}
-          onClaim={(answer) =>
-            markSolved(reveal, { ...solved[reveal], answer, tier: 'tooNiche', claimed: true, passed: false })
-          }
+          onClaim={(answer) => {
+            markSolved(reveal, { ...solved[reveal], answer, tier: 'tooNiche', claimed: true, passed: false });
+            chime('big');
+          }}
           onNext={() => {
             setReveal(null);
             if (nextIndex >= 0) begin(nextIndex);
@@ -247,6 +249,9 @@ function Title({ onStart }) {
   );
 }
 
+// Common answers get a little ding, rare ones the full chime.
+const TIER_CHIME = { plankton: 'small', schooler: 'correct', rare: 'correct', deepCut: 'big', oneInAKrillion: 'big', tooNiche: 'big' };
+
 function Round({ item, index, total, timeLimit, startedAt, now, onDone }) {
   const { check, markSolved } = useSession();
   const [value, setValue] = useState('');
@@ -263,6 +268,7 @@ function Round({ item, index, total, timeLimit, startedAt, now, onDone }) {
     if (finishing.current) return;
     finishing.current = true;
     markSolved(item.id, entry);
+    if (entry.tier) chime(TIER_CHIME[entry.tier] ?? 'correct');
     onDone(item.id);
   }
 
